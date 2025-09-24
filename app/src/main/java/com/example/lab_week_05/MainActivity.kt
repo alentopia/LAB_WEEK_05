@@ -49,14 +49,19 @@ class MainActivity : AppCompatActivity() {
             Response<List<ImageData>>) {
                 if(response.isSuccessful){
                     val image = response.body()
-                    val firstImage = image?.firstOrNull()?.imageUrl.orEmpty()
+                    val firstCat = image?.firstOrNull()
+                    val breedName = if (!firstCat?.breeds.isNullOrEmpty()) {
+                        firstCat?.breeds?.firstOrNull()?.name ?: "Unknown"
+                    } else {
+                        "Unknown"
+                    }
+                    val firstImage = firstCat?.imageUrl.orEmpty()
                     if (firstImage.isNotBlank()) {
                         imageLoader.loadImage(firstImage, imageResultView)
                     } else {
                         Log.d(MAIN_ACTIVITY, "Missing image URL")
                     }
-                    apiResponseView.text = getString(R.string.image_placeholder,
-                        firstImage)
+                    apiResponseView.text = getString(R.string.image_placeholder, breedName)
                 }
                 else{
                     Log.e(MAIN_ACTIVITY, "Failed to get response\n" +
